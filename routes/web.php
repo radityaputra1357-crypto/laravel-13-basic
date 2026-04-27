@@ -7,5 +7,9 @@ Route::get('/', function () {
 });
 
 Route::get('/student', function(){
-    return view('stundent.index');
+    return view('student.index', ['title' => 'Student']);
+});
+
+Route::get('/student/create', function(){
+    return view('student.create', ['title' => 'Create Student']);
 });
