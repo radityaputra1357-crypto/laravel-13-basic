@@ -26,7 +26,8 @@
 
                 <div class="navbar-nav">
                     <a class="nav-link" href="{{ route('student.index') }}">Student</a>
-                  
+                    <a class="nav-link" href="{{ route('department.index') }}">Department</a>
+                    <a class="nav-link" href="{{ route('lecturer.index') }}">Lecturer</a>
                 </div>
 
             </div>
