@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\lecturer;
+use App\Models\Department;
+use App\Models\Lecturer;
 use Illuminate\Http\Request;
 
 class LecturerController extends Controller
 {
     /**
      * Display a listing of the resource.
-     */
+     */ 
     public function index()
     {
-        return view('lecturer.index', [
-            'title' => 'Lecturer',
-            'lecturers' => Lecturer::orderBy('name', 'asc')->get(),
-            ]);
+        return view('lecturer.index', 
+        ['title' => 'Lecturer',
+        'lecturers' => Lecturer::with('department')->orderBy('name', 'asc')->get(),
+        ]);
     }
 
     /**
@@ -23,7 +24,10 @@ class LecturerController extends Controller
      */
     public function create()
     {
-        //
+        return view('lecturer.create', 
+        ['title' => 'Create Lecturer',
+        'departments' => Department::orderBy('name', 'asc')->get(),
+        ]);
     }
 
     /**
@@ -31,38 +35,73 @@ class LecturerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|max:255',
+            'department_id' => 'required|exists:departments,id',
+        ],[
+            'name.required'=>'Nama tidak boleh kosong',
+            'name.max'=>'Nama maximal 255 karakter',
+            'department_id.required'=>'Program Studi tidak boleh kosong',
+            'department_id.exists'=>'Program Studi yang dipilih tidak ditemukan',
+        ]
+    
+    );
+    Lecturer::create($validated);
+    return to_route('lecturer.index')->withSuccess('Data berhasil ditambahkan');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(lecturer $lecturer)
+    public function show(Lecturer $lecturer)
     {
-        //
+        
+    return view('lecturer.show', [
+        'title' => 'Detail Lecturer',
+        'lecturer' => $lecturer,
+    ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(lecturer $lecturer)
+    public function edit(Lecturer $lecturer)
     {
-        //
+        return view('lecturer.edit', 
+            ['title' => 'Edit Lecturer',
+                'departments' => Department::orderBy('name', 'asc')->get(),
+                'lecturer' => $lecturer,
+            ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, lecturer $lecturer)
+    public function update(Request $request, Lecturer $lecturer)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|max:255',
+            'department_id' => 'required|exists:departments,id',
+        ],[
+            'name.required'=>'Nama tidak boleh kosong',
+            'name.max'=>'Nama maximal 255 karakter',
+            'department_id.required'=>'Program Studi tidak boleh kosong',
+            'department_id.exists'=>'Program Studi yang dipilih tidak ditemukan',
+        ]
+    
+    );
+    $lecturer->update($validated);
+    return to_route('lecturer.index')->withSuccess('Data berhasil diubah');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(lecturer $lecturer)
+    public function destroy(Lecturer $lecturer)
     {
-        //
+        
+    $lecturer->delete($lecturer);
+    return to_route('lecturer.index')->withSuccess('Data berhasil dihapus');
+
     }
 }
